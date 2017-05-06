@@ -893,14 +893,14 @@ exports = module.exports = kind(
 			options.error = function (source, res) {
 				it.errored('COMMITTING', opts, res, source);
 			};
-      // BB Original code below will always for a PUT in AjaxSource~AjaxSource
-      // BB We will try passing 'nextStatus' in opts to AjaxSource where it will 
-      // BB be applied after AjaxSource chooses POST or PUT.
+      //BB Original code below will always for a PUT in AjaxSource~AjaxSource
+      //BB We will try passing 'nextStatus' in opts to AjaxSource where it will 
+      //BB be applied after AjaxSource chooses POST or PUT.
       /*
 			// set the state
 			this.set('status', (this.status | States.COMMITTING) & ~States.READY);
       */
-      // BB add nextStatus to options
+      //BB add nextStatus to options
       options.nextStatus = (this.status | States.COMMITTING) & ~States.READY;
 			// now pass this on to the source to execute as it sees fit
 			Source.execute('commit', this, options);
