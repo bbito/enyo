@@ -76,13 +76,17 @@ module.exports = kind(
 	commit: function (model, opts) {
 		opts.method = (model.status & States.NEW) ? 'POST': 'PUT';
     //BB TEMP LOG
-    console.log('In AjaxSource commit: method shoudl be ' + opts.method);
+    console.log('In AjaxSource commit: method should be ' + opts.method);
     //BB Assign the status we deferred in Model and Collection
     if (typeof opts.nextStatus !== "undefined"){
       if (typeof model.map !== "undefined") { //BB It should be a Collection
+        //BB TEMP LOG
+        console.log('In AjaxSource commit: typeof model.map !== "undefined" - this should be a Collection')
         model.set('status', opts.nextStatus); //BB using set as in Collection.js
       }
       else {
+        //BB TEMP LOG
+        console.log('In AjaxSource commit: typeof model.map == "undefined" - this should be a Model')
         model.status = opts.nextStatus; //BB Direct assignment as in Model.js
       }
     }
