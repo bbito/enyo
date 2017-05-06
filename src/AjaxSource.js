@@ -75,6 +75,10 @@ module.exports = kind(
 	*/
 	commit: function (model, opts) {
 		opts.method = (model.status & States.NEW) ? 'POST': 'PUT';
+    // BB Assign the status we deferred in Model and Collection
+    if (typeof opts.nextStatus !== "undefined"){
+      model.status = opts.nextStatus;
+    }
 		opts.url = this.buildUrl(model, opts);
 		opts.postBody = opts.postBody || model.toJSON();
 		this.go(opts);

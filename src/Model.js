@@ -389,10 +389,15 @@ var Model = module.exports = kind(
 			options.error = function (source, res) {
 				it.errored('COMMITTING', opts, res, source);
 			};
-
+      // BB Original code below will always for a PUT in AjaxSource~AjaxSource
+      // BB We will try passing 'nextStatus' in opts to AjaxSource where it will 
+      // BB be applied after AjaxSource chooses POST or PUT.
+      /*
 			// set the state
 			this.status = this.status | States.COMMITTING;
-
+      */
+      // BB add nextStatus to options
+      options.nextStatus = this.status | States.COMMITTING;
 			// now pass this on to the source to execute as it sees fit
 			Source.execute('commit', this, options);
 		} else this.errored(this.status, opts);
