@@ -390,6 +390,9 @@ var Model = module.exports = kind(
 				it.errored('COMMITTING', opts, res, source);
 			};
 
+			//BB save current status to options.preCommitStatus to pass to AjaxSource
+			options.preCommitStatus = this.status;
+
 			// set the state
 			this.status = this.status | States.COMMITTING;
 

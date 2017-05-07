@@ -74,7 +74,22 @@ module.exports = kind(
 	* @public
 	*/
 	commit: function (model, opts) {
-		opts.method = (model.status & States.NEW) ? 'POST': 'PUT';
+		//BB See if we passed in a preCommitStatus from Model or Collection commit:
+		if (opts.preCommitStatus === undefined){
+			opts.method = (model.status & States.NEW) ? 'POST': 'PUT';
+			
+			console.log('In AjaxSource commit: opts.preCommitStatus === undefined'); //BB TEMP LOG
+		} else {
+			opts.method = (opts.preCommitStatus & States.NEW) ? 'POST': 'PUT';
+			console.log('In AjaxSource commit: opts.preCommitStatus = ' + opts.preCommitStatus); //BB TEMP LOG
+			console.log('In AjaxSource commit: (opts.preCommitStatus & States.NEW) = ' + (opts.preCommitStatus & States.NEW)); //BB TEMP LOG
+			console.log('In AjaxSource commit: opts.method = ' + opts.method); //BB TEMP LOG
+			//BB Reset opts.preCommitStatus to undefined 
+			//BB this property could be deleted, but evidently that is much more expensive
+			opts.preCommitStatus = undefined;
+			console.log('In AjaxSource commit - After clearing preCommitStatus: opts.method = ' + opts.method);
+		}
+		console.log('In AjaxSource commit: method should be ' + opts.method); //BB TEMP LOG
 		opts.url = this.buildUrl(model, opts);
 		opts.postBody = opts.postBody || model.toJSON();
 		this.go(opts);
