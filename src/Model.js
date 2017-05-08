@@ -439,10 +439,12 @@ var Model = module.exports = kind(
 			}
 
 			options.success = function (source, res) {
+        console.log('Model.fetch options.success'); //BB TEMP LOG
 				it.fetched(opts, res, source);
 			};
 
 			options.error = function (source, res) {
+        console.log('Model.fetch options.error'); //BB TEMP LOG
 				it.errored('FETCHING', opts, res, source);
 			};
 
@@ -596,6 +598,8 @@ var Model = module.exports = kind(
 	* @public
 	*/
 	set: function (path, is, opts) {
+    console.log('IN Model.set!!!'); //BB TEMP LOG
+    console.log('Top of Model.set, this.status = '+this.status); //BB TEMP LOG
 		if (!this.destroyed) {
 
 			var attrs = this.attributes,
@@ -654,7 +658,8 @@ var Model = module.exports = kind(
 			}
 
 			if (changed) {
-
+        console.log('Model.set - if (changed), this.status = '+this.status); //BB TEMP LOG
+        if (!fetched) console.log('Model.set - (!fetched), this.status = '+this.status); //BB TEMP LOG
 				// we add dirty as a value of the status but clear the CLEAN bit if it
 				// was set - this would allow it to be in the ERROR state and NEW and DIRTY
 				if (!fetched) this.status = (this.status | States.DIRTY) & ~States.CLEAN;
@@ -785,6 +790,8 @@ var Model = module.exports = kind(
 	* @public
 	*/
 	fetched: function (opts, res, source) {
+    console.log('IN Model.fetched!!!'); //BB TEMP LOG
+    console.log('Top of Model.fetched, this.status = '+this.status); //BB TEMP LOG
 		var idx,
 			options = this.options;
 
@@ -811,9 +818,10 @@ var Model = module.exports = kind(
 		// clear the FETCHING and NEW state (if it was NEW) we do not set it as dirty as this
 		// action alone doesn't warrant a dirty flag that would need to be set in the set method
 		if (!this._waiting) this.status = this.status & ~(States.FETCHING | States.NEW);
-
+    
 		// now look for an additional success callback
 		if (opts.success) opts.success(this, opts, res, source);
+    console.log('Bottom of Model.fetched, this.status = '+this.status); //BB TEMP LOG
 	},
 
 	/**

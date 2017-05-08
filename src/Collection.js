@@ -1153,6 +1153,7 @@ exports = module.exports = kind(
 	fetched: function (opts, res, source) {
 		var idx;
 
+    console.log('Top of Collection.fetched, this.status = '+this.status); //BB TEMP LOG
 		if (this._waiting) {
 			idx = this._waiting.findIndex(function (ln) {
 				return (ln instanceof Source ? ln.name : ln) == source;
@@ -1174,6 +1175,15 @@ exports = module.exports = kind(
 		if (!this._waiting) {
 			this.set('status', (this.status | States.READY) & ~States.FETCHING);
 		}
+    var collLength = this.length; //BB TEMP
+    for (i=0;i<collLength;i++){ //BB TEMP
+      var currModel = this.at(i);
+      console.log('Models in Collection.fetched: currModel.status = ' + currModel.status);
+      console.log('FORCING model.status to CLEAN instead of NEW+CLEAN');
+      currModel.status = currModel.status & ~States.NEW;
+      console.log('Forced CLEAN Models in Collection.fetched: currModel.status = ' + currModel.status);
+    }
+    console.log('Bottom of Collection.fetched, this.status = '+this.status); //BB TEMP LOG
 	},
 
 	/**
