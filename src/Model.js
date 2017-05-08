@@ -368,7 +368,7 @@ var Model = module.exports = kind(
 		var options,
 			source,
 			it = this;
-
+    console.log('Top of Model.commit, this.status = ' + this.status); //BB TEMP LOG
 		// if the current status is not one of the error or busy states we can continue
 		if (!(this.status & (States.ERROR | States.BUSY))) {
 
@@ -383,6 +383,7 @@ var Model = module.exports = kind(
 			}
 
 			options.success = function (source, res) {
+        console.log('Model.commit - options.success, it.status = ' + it.status); //BB TEMP LOG
 				it.committed(opts, res, source);
 			};
 
@@ -641,6 +642,7 @@ var Model = module.exports = kind(
 			force = force || opts.force;
 			commit = opts.commit;
 			fetched = opts.fetched;
+      console.log('Model.set - fetched = opts.fetched: ' + fetched); //BB TEMP LOG
 
 			for (key in incoming) {
 				value = incoming[key];
@@ -663,7 +665,7 @@ var Model = module.exports = kind(
 				// we add dirty as a value of the status but clear the CLEAN bit if it
 				// was set - this would allow it to be in the ERROR state and NEW and DIRTY
 				if (!fetched) this.status = (this.status | States.DIRTY) & ~States.CLEAN;
-
+        
 				if (!silent) this.emit('change', changed, this);
 
 				if (commit && !fetched) this.commit(opts);
@@ -671,6 +673,15 @@ var Model = module.exports = kind(
 				// reset value so subsequent changes won't be added to this change-set
 				this.changed = null;
 			}
+      //BB Try clearing opts.fetched here so future .set calls DIRTY the model
+      //BB Fetching will go through Model.set, so we don't want the first set to DIRTY the Model
+      //BB but we need subsequent set calls to DIRTY it, so we'll clear fetched and opts.fetched
+      //BB before leaving set.
+      opts.fetched = options.fetched = fetched = false; //BB TEST
+      //fetched = false; //BB TEST
+      console.log('Model.set if(changed): after opts.fetched = false,  opts.fetched = ' + opts.fetched); //BB LOG
+      console.log('Model.set if(changed): after opts.fetched = false,  options.fetched = ' + options.fetched); //BB LOG
+      console.log('Model.set if(changed): after opts.fetched = false,  fetched = ' + fetched); //BB LOG
 		}
 
 		return this;
