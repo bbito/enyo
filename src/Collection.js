@@ -869,6 +869,7 @@ exports = module.exports = kind(
 	* @public
 	*/
 	commit: function (opts) {
+    console.log('In Collection.commit BEFORE status modification: this.status =', this.status); //BB LOG
 		var options,
 			source,
 			it = this;
@@ -897,6 +898,7 @@ exports = module.exports = kind(
 			// set the state
 			this.set('status', (this.status | States.COMMITTING) & ~States.READY);
 
+      console.log('In Collection.commit AFTER status modification: this.status =', this.status); //BB LOG
 			// now pass this on to the source to execute as it sees fit
 			Source.execute('commit', this, options);
 		} else if (this.status & States.ERROR) this.errored(this.status, opts);

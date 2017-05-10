@@ -74,7 +74,9 @@ module.exports = kind(
 	* @public
 	*/
 	commit: function (model, opts) {
+    console.log('In AjaxSource.commit BEFORE status test: model.status =', model.status); //BB LOG
 		opts.method = (model.status & States.NEW) ? 'POST': 'PUT';
+    console.log('In AjaxSource.commit status test: (model.status & States.NEW) =', (model.status & States.NEW)); //BB LOG
 		opts.url = this.buildUrl(model, opts);
 		opts.postBody = opts.postBody || model.toJSON();
 		this.go(opts);
