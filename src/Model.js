@@ -711,6 +711,7 @@ var Model = module.exports = kind(
 	* @public
 	*/
 	constructor: function (attrs, props, opts) {
+    console.log('In Model constructor, making models!'); //BB TEMP LOG
 
 		// in cases where there is an options hash provided in the _props_ param
 		// we need to integrate it manually...

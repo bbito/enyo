@@ -75,14 +75,15 @@ module.exports = kind(
 	*/
 	commit: function (model, opts) {
 		//BB See if we passed in a preCommitStatus from Model or Collection commit:
-		if (opts.preCommitStatus === undefined){
-			opts.method = (model.status & States.NEW) ? 'POST': 'PUT';
-			
-		} else {
+		if (opts.preCommitStatus){
+      console.log('AjaxSource.commit, (opts.preCommitStatus & States.NEW) = ' + (opts.preCommitStatus & States.NEW)); //BB LOG
 			opts.method = (opts.preCommitStatus & States.NEW) ? 'POST': 'PUT';
 			//BB Reset opts.preCommitStatus to undefined 
 			//BB this property could be deleted, but evidently that is much more expensive
 			opts.preCommitStatus = undefined;
+		} else {
+      console.log('AjaxSource.commit, (model.status & States.NEW) = ' + (opts.preCommitStatus & States.NEW)); //BB LOG
+			opts.method = (model.status & States.NEW) ? 'POST': 'PUT'; //BB Original line
 		}
 		opts.url = this.buildUrl(model, opts);
 		opts.postBody = opts.postBody || model.toJSON();

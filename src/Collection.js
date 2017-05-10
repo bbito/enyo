@@ -449,6 +449,9 @@ exports = module.exports = kind(
 			, create = opts.create !== false
 			, modelOpts = opts.modelOptions
 			, index = opts.index;
+      
+      //BB opts.fetched flag as in Model.js
+      var fetched = opts.fetched; //BB WIP - Where to use this to strip NEW from status???
 
 		idx = !isNaN(index) ? Math.max(0, Math.min(len, index)) : idx;
 
@@ -554,7 +557,20 @@ exports = module.exports = kind(
 		}
 
 		// added && loc.stopNotifications().add(added, idx).startNotifications();
+    //BB not sure what above comment is about...
+    //BB this looks like where to check `fetched` and remove NEW State accordingly
 		if (added) {
+      console.log('In Collection.add - if (added): JSON.stringify(added) = ' + JSON.stringify(added)); //BB TEMP LOG
+      console.log('In Collection.add - if (added): added = ' + added); //BB TEMP LOG
+      //BB In Enyo 2.7.0, Models fetched into a Collection are NEW & CLEAN (5), We want them only CLEAN (4)
+      if (fetched) {
+        for (i=0; i<added.length; i++){
+          console.log('In Collection.add, if(added), if(fetched), added.status = '+added[i].status); //BB TEMP LOG
+          added[i].status = added[i].status & ~(States.NEW); //BB Strip NEW State from fetched models
+          console.log('In Collection.add, if(added), if(fetched), added.status ~(States.NEW) = '+added[i].status); //BB TEMP LOG
+        }
+        opts.fetched = fetched = false;
+      }
 			loc.add(added, idx);
 			sort && this.sort(sort, {silent: true});
 
@@ -1166,7 +1182,19 @@ exports = module.exports = kind(
 		// that will override the defaults (e.g. parse) we don't do that here as it will
 		// be done in the add method -- also note we reassign the result to whatever was
 		// actually added and pass that to any other success callback if there is one
-		if (res) res = this.add(res, opts);
+    
+		//if (res) res = this.add(res, opts); //BB ORIGINAL LINE
+    //BB try adding opts.fetched = true below commented original line above
+    if (res){
+      if(!opts) { //BB should be a good spot to setup opts.fetched
+        console.log('Collection.fetched, if(!opts) FIRED'); //BB TEMP LOG
+        opts = {fetched: true}; //BB create opts if null and add fetched property to opts as in Model.js
+      }
+      else {
+        opts.fetched = true; //BB add fetched property to opts as in Model.js
+      }
+      res = this.add(res, opts);
+    } 
 
 		// now look for an additional success callback
 		if (opts && opts.success) opts.success(this, opts, res, source);
@@ -1175,6 +1203,7 @@ exports = module.exports = kind(
 		if (!this._waiting) {
 			this.set('status', (this.status | States.READY) & ~States.FETCHING);
 		}
+    /* //BB
     var collLength = this.length; //BB TEMP
     for (i=0;i<collLength;i++){ //BB TEMP
       var currModel = this.at(i);
@@ -1183,6 +1212,7 @@ exports = module.exports = kind(
       currModel.status = currModel.status & ~States.NEW;
       console.log('Forced CLEAN Models in Collection.fetched: currModel.status = ' + currModel.status);
     }
+    */ //BB
     console.log('Bottom of Collection.fetched, this.status = '+this.status); //BB TEMP LOG
 	},
 
